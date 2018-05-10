@@ -1,0 +1,20 @@
+{
+  "name": "Job Alerts, show job leads in a better way",
+  "description": "Show alerts about jobs",
+  "version": "1.0.1.8",
+  "default_locale": "en",
+
+  "permissions": [ "gcm", "alarms", "activeTab", "tts", "idle", "notifications",
+    "storage", "contextMenus", "cookies", "webRequestBlocking", "identity", "https://jobs.gokabam.com/" ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "browser_action": {
+      "default_title": "Scan Jobs",
+      "default_icon": "images/icons/icon_default.png"
+  },
+
+  "options_page": "options.html",
+  "manifest_version": 2
+}
