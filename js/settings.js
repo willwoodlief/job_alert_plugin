@@ -89,6 +89,7 @@ var Settings = function(params) {
         //return Promise.reject("problem in db");
         var DBNAME = "JOBS";
         return wrappedDB.open(DBNAME, storeId).then(() => {
+            console.debug("loading in database");
             return loadFromDB();
         });
     };

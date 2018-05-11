@@ -119,6 +119,35 @@ function init() {
                 }
             });
 
+            //https://github.com/Olical/EventEmitter/blob/master/docs/guide.md
+           // noinspection JSUnresolvedFunction
+            window.ee = new EventEmitter();
+
+            function listings_listener(listings) {
+                console.log('Found listings.',listings);
+            }
+
+            ee.addListener('listings', listings_listener);
+
+            function stats_listener(stats) {
+                console.log('The stats listener.',stats);
+            }
+
+            ee.addListener('stats', stats_listener);
+
+            do_stats_call().then(msg => console.log("stats loop then",msg)).catch(e=> console.warn("stats failed",e));
+            do_list_call({start_ts:1525739941, page:1,per_page:100}).
+                then(msg => console.log("called list ok",new Date(), msg.results.length) ).
+                catch(e=> console.warn("list failed",e));
+
+
+            function runs_listener(stats) {
+                console.log('The runs listener.',stats);
+            }
+            ee.addListener('runs', runs_listener);
+            do_run_call().then(msg => console.log("run then",msg)).catch(e=> console.warn("run failed",e));
+
+
 
         }).catch(error => {
             console.error("Could not load locale messages",error);
