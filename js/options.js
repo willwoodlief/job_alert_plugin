@@ -111,11 +111,15 @@ chrome.runtime.getBackgroundPage(function (backgroundPage) {
                             case 'radio':
                                 if( element.is(":checked") ){ // check if the radio is checked
                                     value = element.val(); // retrieve the value
+                                } else {
+                                    value = false;
                                 }
                                 break;
                             case 'checkbox':
                                 if( element.is(":checked") ){ // check if the radio is checked
-                                    value = element.val(); // retrieve the value
+                                    value = true; // retrieve the value
+                                } else {
+                                    value = false;
                                 }
                                 break;
                             case 'textarea':

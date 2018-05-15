@@ -1,7 +1,7 @@
 {
   "name": "Job Alerts, show job leads in a better way",
   "description": "Show alerts about jobs",
-  "version": "1.0.1.9",
+  "version": "1.0.1.13",
   "default_locale": "en",
 
   "permissions": [ "gcm", "alarms", "activeTab", "tts", "idle", "notifications",

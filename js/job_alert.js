@@ -9,7 +9,9 @@ var DEFAULT_SETTINGS = {
     "popupWidth": "800",
     "popupHeight": "680",
     "setPositionAndSize":true,
-    "notificationSoundVolume": 100
+    "notificationSoundVolume": 100,
+    "limit_of_jobs_stored": 500,   //this is a rough count, does not included starred, or the next page of jobs
+    "on_switch":true
 };
 
 

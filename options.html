@@ -21,7 +21,7 @@
             <label for="server_url">Server URL (do not add in trailing slash)</label>
         </td>
         <td>
-            <input indexdb-storage="server_url" type="text" name="server_url" id="server_url">
+            <input indexdb-storage="server_url" type="text" name="server_url" id="server_url" size="60">
         </td>
     </tr>
     <tr>
@@ -29,7 +29,7 @@
             <label for="user_name">Kabam Jobs User Name</label>
         </td>
         <td>
-            <input indexdb-storage="user_name" type="text" name="user_name" id="user_name">
+            <input indexdb-storage="user_name" type="text" name="user_name" id="user_name" size="40">
         </td>
     </tr>
     <tr>
@@ -40,6 +40,34 @@
             <input indexdb-storage="user_password" type="password" name="user_password" id="user_password">
         </td>
     </tr>
+
+    <tr>
+        <td>
+            <label for="limit_of_jobs_stored">Limit of Jobs Stored</label>
+        </td>
+        <td>
+            <input indexdb-storage="limit_of_jobs_stored" type="text" name="limit_of_jobs_stored" id="limit_of_jobs_stored">
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <label for="limit_of_jobs_stored">Run Switch</label>
+        </td>
+        <td>
+            <input indexdb-storage="on_switch" type="checkbox" name="on_switch" id="on_switch" value="1">
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <label for="the-save-button"> </label>
+        </td>
+        <td>
+            <button id="the-save-button" type="button">Save!</button>
+        </td>
+    </tr>
+
 </table>
 </body>
 </html>

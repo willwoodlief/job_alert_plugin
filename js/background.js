@@ -48,11 +48,34 @@ function init() {
             if (chrome.contextMenus) {
 
                 chrome.contextMenus.removeAll(function() {
-                    chrome.contextMenus.create({id:'test_me',title: getMessage("testContextMenuEntry"),
-                        contexts: ["browser_action"]});
+
+                    let is_switch_on = Settings.read('on_switch');
+
+                    chrome.contextMenus.create({id:"on_off_switch","title":getMessage("onOffMenuEntry"),
+                        "type": "checkbox",contexts: ["browser_action"],checked: is_switch_on, },
+                        ()=>{
+                            setInterval(() => {
+                                let is_switch_on = Settings.read('on_switch');
+                                chrome.contextMenus.update("on_off_switch", { "checked": is_switch_on });
+                               // console.log("updated on switch with ",is_switch_on);
+                            }, 2000)
+                        });
+
+                    {
+
+                    }
                 });
 
                 chrome.contextMenus.onClicked.addListener((info,tab) => {
+                    if (info.menuItemId == 'on_off_switch') {
+                        if (info.checked) {
+                            console.log("CHECKED!!!");
+                            Settings.store('on_switch',true);
+                        } else {
+                            console.log("un-checked!!!");
+                            Settings.store('on_switch',false);
+                        }
+                    }
                     console.log("item " + info.menuItemId + " was clicked");
                     console.log("info: " + JSON.stringify(info));
                     console.log("tab: " + JSON.stringify(tab));
@@ -61,17 +84,78 @@ function init() {
 
 
 
+
+
             }
 
+            //https://github.com/Olical/EventEmitter/blob/master/docs/guide.md
+            // noinspection JSUnresolvedFunction
+            window.ee = new EventEmitter();
+
+
+            /**
+             * @param {ListResponse} listings
+             */
+            function listings_from_server_listener(listings) {
+                console.log('Found listings.',listings);
+                process_listings_from_server(listings);
+            }
+
+            ee.addListener('listings_from_server', listings_from_server_listener);
+
+            function stats_listener(stats) {
+                console.log('The stats listener.',stats);
+            }
+
+            ee.addListener('stats', stats_listener);
+
+
+
+
+
+            function runs_listener(stats) {
+                console.log('The runs listener.',stats);
+            }
+            ee.addListener('runs', runs_listener);
+
+
+            //todo have option in menu to stop and start timers, make that option a setting
             if (chrome.alarms) {
+                chrome.alarms.clear("get_status",b=> {
+                    console.log("cleared old status alarm",b);
+                    chrome.alarms.clear("get_listings",b=> {
+                        console.log("cleared old listings alarm",b);
+                        chrome.alarms.create("get_status", { periodInMinutes:2.15 });
+                        chrome.alarms.create("get_listings", { periodInMinutes:1 });
+                    });
+                });
+
                 chrome.alarms.onAlarm.addListener(function(alarm) {
-                    if (alarm.name == "extensionUpdatedSync") {
-                        syncOptions.save("extensionUpdatedSync");
-                    } else if (alarm.name == "test") {
-                        localStorage.test = new Date();
+                    let is_switch_on = Settings.read('on_switch');
+
+                    if (alarm.name == "get_status") {
+                        if (!is_switch_on) {return;}
+                        do_stats_call().then(msg => {
+                            console.log("stats loop then",msg) ;
+                            do_run_call().then(msg => console.log("run then",msg)).catch(e=> console.warn("run failed",e));
+                        }).
+                        catch(e=> console.warn("stats failed",e));
+
+                    } else if (alarm.name == "get_listings") {
+                        if (!is_switch_on) {return;}
+                        // options {ts_start:1525739941, page:1,per_page:100}
+                        let list_options = get_list_options();
+                        do_list_call(list_options).
+                        /**
+                         * @param {ListResponse} msg
+                         */
+                        then(msg => {console.log("called list ok",new Date(), msg.results.length) }).
+                        catch(e=> console.warn("list failed",e));
                     }
                 });
             }
+
+
 
             if (chrome.idle.onStateChanged) {
                 chrome.idle.onStateChanged.addListener(newState => {
@@ -119,33 +203,9 @@ function init() {
                 }
             });
 
-            //https://github.com/Olical/EventEmitter/blob/master/docs/guide.md
-           // noinspection JSUnresolvedFunction
-            window.ee = new EventEmitter();
-
-            function listings_listener(listings) {
-                console.log('Found listings.',listings);
-            }
-
-            ee.addListener('listings', listings_listener);
-
-            function stats_listener(stats) {
-                console.log('The stats listener.',stats);
-            }
-
-            ee.addListener('stats', stats_listener);
-
-            do_stats_call().then(msg => console.log("stats loop then",msg)).catch(e=> console.warn("stats failed",e));
-            do_list_call({start_ts:1525739941, page:1,per_page:100}).
-                then(msg => console.log("called list ok",new Date(), msg.results.length) ).
-                catch(e=> console.warn("list failed",e));
 
 
-            function runs_listener(stats) {
-                console.log('The runs listener.',stats);
-            }
-            ee.addListener('runs', runs_listener);
-            do_run_call().then(msg => console.log("run then",msg)).catch(e=> console.warn("run failed",e));
+
 
 
 
